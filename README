@@ -1,0 +1,8 @@
+Object oriented PHP interface to jquery-gmap plugin, used to access Google Maps with added functionality.
+
+Q : Why use this extension when there are already others ?
+
+A : This extension does not access the Google Maps API directly (although it can), it uses the GMap3 jQuery plugin.
+    There are additional functionalities, and it is easier to do certain things, for example you can place markers
+    and info windows using addresses instead of figuring out the latitude/longitude. There are also some built-in
+    callbacks for centering certain overlays on the map.
