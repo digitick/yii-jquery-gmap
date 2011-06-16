@@ -50,6 +50,9 @@ abstract class EGmap3MapSubOptionControl extends EGmap3OptionBase
  */
 class EGmap3MapTypeControlOptions extends EGmap3MapSubOptionControl
 {
+	/**
+	 * @var array IDs of map types to show in the control.
+	 */
 	public $mapTypeIds;
 	/**
 	 * Style id. Used to select what style of map type control to display.

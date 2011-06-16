@@ -17,6 +17,7 @@
  */
 abstract class EGmap3OptionBase extends EGmap3ObjectBase
 {
+
 	/**
 	 * Get the option validation information. Must be overriden by the child
 	 * class if there are checks to run.
@@ -44,27 +45,68 @@ abstract class EGmap3OptionBase extends EGmap3ObjectBase
 				}
 			}
 			// allowed class
-			else if (is_string($allowed) && $allowed === 'class') {
-				$className = 'EGmap3' . ucfirst($property);
-				// array given, convert to object
-				if (is_array($propertyValue)) {
-					$object = new $className();
-					foreach ($propertyValue as $k => $v) {
-						$object->$k = $v;
-					}
-					$this->$property = $object;
+			else if (is_string($allowed) && strpos($allowed, 'class') !== false) {
+				// class name different from property name
+				if (strpos($allowed, 'class:') !== false) {
+					$className = substr($allowed, 6);
 				}
-				// object given, check type
-				else if (is_object($propertyValue)) {
-					if (get_class($propertyValue) !== $className){
-						throw new CException('Invalid object type given for ' . $property . ' : ' . get_class($propertyValue));
-					}
-				}
+				// class name same as property name
 				else {
-					throw new CException('The property : ' . $property . ' must be an object or an array.');
+					$className = 'EGmap3' . ucfirst($property);
 				}
+				$this->$property = $this->verifyClassType($property, $className, $propertyValue);
 				$this->$property->verifyOptions();
 			}
+			/*TODO*/
+			// array of a given class
+			else if (is_string($allowed) && strpos($allowed, 'arrayOfClass:') !== false) {
+				// basic sanity check
+				if (!is_array($propertyValue)) {
+					throw new CException("The property : {$property} must be an array containg objects of class : {$className}.");
+				}
+				$className = substr($propertyValue, 12);
+				die($className);
+				
+				// verify each sub-object
+				foreach ($propertyValue as $prop => $val) {
+					$object = $this->verifyClassType($prop, $className, $val);
+					if ($object->verifyOptions()) {
+						$propertyValue[$prop] = $object;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Check that a given value is an object of a given type.
+	 * If the value is an array, attempt to create an object of the array values.
+	 * 
+	 * @param string $property Object property
+	 * @param string $className Name of class to verify or instanciate
+	 * @param mixed $propertyValue Value to check
+	 * @return EGmap3OptionBase 
+	 */
+	protected function verifyClassType($property, $className, $propertyValue)
+	{
+		// array given, convert to object
+		if (is_array($propertyValue)) {
+			$object = new $className();
+			foreach ($propertyValue as $k => $v) {
+				$object->$k = $v;
+			}
+			return $object;
+		}
+		// object given, check type
+		else if (is_object($propertyValue)) {
+			if (get_class($propertyValue) !== $className) {
+				throw new CException('Invalid object type given for ' . $property . ' : ' . get_class($propertyValue));
+			}
+			return $propertyValue;
+		}
+		else {
+			throw new CException("The property : {$property} must be an object or an array.");
 		}
 	}
 
@@ -81,4 +123,5 @@ abstract class EGmap3OptionBase extends EGmap3ObjectBase
 		}
 		return true;
 	}
+
 }

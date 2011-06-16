@@ -144,8 +144,13 @@ class EGmap3MapOptions extends EGmap3OptionBase
 	 * @var boolean
 	 */
 	public $scrollwheel;
-	// TODO
-	//public $streetView;
+	/**
+	 * @var EGmap3StreetViewPanorama A StreetViewPanorama to display when the
+	 * Street View pegman is dropped on the map. If no panorama is specified,
+	 * a default StreetViewPanorama will be displayed in the map's div when the
+	 * pegman is dropped.
+	 */
+	public $streetView;
 	/**
 	 * The initial enabled/disabled state of the Street View Pegman control.
 	 * @var boolean
@@ -195,7 +200,7 @@ class EGmap3MapOptions extends EGmap3OptionBase
 			'panControlOptions' => 'class',
 			'rotateControlOptions' => 'class',
 			'scaleControlOptions' => 'class',
-			//'streetView' => 'class',
+			'streetView' => 'class:EGmap3StreetViewPanorama',
 			'streetViewControlOptions' => 'class',
 			'zoomControlOptions' => 'class'
 		);
