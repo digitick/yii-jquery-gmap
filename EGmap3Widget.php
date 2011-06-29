@@ -23,6 +23,7 @@
 // load these like this so small classes can be combined into fewer files.
 require_once 'EGmap3Constants.php';
 require_once 'EGmap3MapSubOptions.php';
+require_once 'EGmap3Primitives.php';
 
 /**
  * Main class.
