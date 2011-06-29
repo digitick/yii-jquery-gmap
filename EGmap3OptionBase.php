@@ -13,7 +13,7 @@
  */
 
 /**
- * Base calss for all options.
+ * Base class for all options.
  */
 abstract class EGmap3OptionBase extends EGmap3ObjectBase
 {
