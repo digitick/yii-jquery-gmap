@@ -18,50 +18,50 @@
 class EGmap3CircleOptions extends EGmap3OptionBase
 {
 	/**
-	 * The center
-	 * @var array
+	 * @var array The center
 	 */
 	public $center;
 	/**
-	 * Indicates whether this Circle handles click events. Defaults to true.
-	 * @var boolean
+	 * @var boolean Indicates whether this Circle handles click events.
+	 * Defaults to true.
 	 */
 	public $clickable;
 	/**
-	 * The fill color. All CSS3 colors are supported except for extended
-	 * named colors.
-	 * @var string
+	 * @var string The fill color. All CSS3 colors are supported except for
+	 * extended named colors.
 	 */
 	public $fillColor;
 	/**
-	 * The fill opacity between 0.0 and 1.0
-	 * @var float
+	 * @var float The fill opacity between 0.0 and 1.0
 	 */
 	public $fillOpacity;
 	/**
-	 * The radius in meters on the Earth's surface.
-	 * @var integer
+	 * @var integer The radius in meters on the Earth's surface.
 	 */
 	public $radius;
 	/**
-	 * The stroke color. All CSS3 colors are supported except for
+	 * @var string The stroke color. All CSS3 colors are supported except for
 	 * extended named colors.
-	 * @var string
 	 */
 	public $strokeColor;
 	/**
-	 * The stroke opacity between 0.0 and 1.0
-	 * @var float
+	 * @var float The stroke opacity between 0.0 and 1.0
 	 */
 	public $strokeOpacity;
 	/**
-	 * The stroke width in pixels.
-	 * @var integer
+	 * @var integer The stroke width in pixels.
 	 */
 	public $strokeWeight;
 	/**
-	 * The zIndex compared to other polys.
-	 * @var integer
+	 * @var integer The zIndex compared to other polys.
 	 */
 	public $zIndex;
+	
+	public function getOptionChecks()
+	{
+		$array = array(
+			'center' => 'array'
+		);
+		return array_merge($array, parent::getOptionChecks());
+	}
 }

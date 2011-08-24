@@ -33,43 +33,40 @@ require_once 'EGmap3Primitives.php';
 class EGmap3Widget extends CWidget
 {
 	/**
-	 * Use minified version of gmap3 library, defaults to true.
-	 * @var boolean
+	 * @var boolean Use minified version of gmap3 library, defaults to true.
 	 */
 	public $mini = true;
 	/**
-	 * Width of the map widget.
-	 * By default uses 'px' but other units may be used.
-	 * @var integer
+	 * @var integer Width of the map widget. By default uses 'px' but other
+	 * units may be used.
 	 */
 	public $width = 550;
 	/**
-	 * Height of the map widget.
-	 * By default uses 'px' but other units may be used.
-	 * @var integer
+	 * @var integer Height of the map widget. By default uses 'px' but other
+	 * units may be used.
 	 */
 	public $height = 400;
 	/**
-	 * CSS size unit to use, such as : 'px', 'em', 'pt', etc ..
-	 * @var string
+	 * @var string CSS size unit to use, such as : 'px', 'em', 'pt', etc ..
 	 */
 	public $unit = 'px';
 	/**
-	 * Set the map widget to be resizable, default is false.
-	 * @var boolean
+	 * @var boolean Set the map widget to be resizable, default is false.
 	 */
 	public $resizable = false;
 	/**
-	 * Show a layer that displays bike lanes and paths and demotes
+	 * @var boolean Show a layer that displays bike lanes and paths and demotes
 	 * large roads.
-	 * @var boolean
 	 */
 	public $bicyclingLayer;
 	/**
-	 * Show a layer that displays current road traffic.
-	 * @var boolean
+	 * @var boolean Show a layer that displays current road traffic.
 	 */
 	public $trafficLayer;
+	/**
+	 * @var boolean Zoom the map to automatically fit the elements it contains.
+	 */
+	public $autofit;
 	//
 	protected $rectangles = array();
 	protected $polygons = array();
@@ -78,9 +75,9 @@ class EGmap3Widget extends CWidget
 	protected $markers = array();
 	protected $circles = array();
 	protected $kmlLayers = array();
+	protected $styledMaps = array();
 	/**
-	 *
-	 * @var EGmap3Map
+	 * @var EGmap3Map The map itself.
 	 */
 	protected $map;
 
@@ -125,12 +122,20 @@ class EGmap3Widget extends CWidget
 		$this->map->setOptions($options);
 	}
 
+	/**
+	 * @return EGmap3MapOptions
+	 */
 	public function getOptions()
 	{
 		$this->initOptions();
 		return $this->map->getOptions();
 	}
 
+	/**
+	 * Add an action to the map.
+	 * 
+	 * @param EGmap3ActionBase $action 
+	 */
 	public function add(EGmap3ActionBase $action)
 	{
 		switch (get_class($action)) {
@@ -154,6 +159,9 @@ class EGmap3Widget extends CWidget
 				break;
 			case 'EGmap3Route':
 				$this->routes[] = $action;
+				break;
+			case 'EGmap3StyledMap':
+				$this->styledMaps[] = $action;
 				break;
 			default:
 				throw new CException('Invalid type given to add.');
@@ -185,42 +193,10 @@ class EGmap3Widget extends CWidget
 	{
 		return $this->routes;
 	}
-
-	public function init()
+	
+	public function getStyledMaps()
 	{
-		$this->registerCoreScripts();
-
-		// action initialize
-		$script = $this->map->toJS();
-
-		// add objectified actions
-		$overlays = array(
-			'routes', 'markers', 'circles', 'rectangles', 'polygons', 'polylines',
-		);
-		foreach ($overlays as $actions) {
-			foreach ($this->$actions as $action) {
-				$script .= ',' . $action->toJs();
-			}
-		}
-		// other actions
-		if ($this->bicyclingLayer) {
-			$script .= ",{action:'addBicyclingLayer'}";
-		}
-		if ($this->trafficLayer) {
-			$script .= ",{action:'addTrafficLayer'}";
-		}
-
-		$script = "jQuery('#{$this->id}').gmap3($script)";
-		if ($this->resizable === true) {
-			$script .= '.resizable()';
-		}
-		$script .= ';';
-
-		//print_r($script);die;
-
-		$this->registerScript($script);
-
-		parent::init();
+		return $this->styledMaps;
 	}
 
 	/**
@@ -332,7 +308,80 @@ class EGmap3Widget extends CWidget
 		$script = preg_replace('/[\n\r\t]/', null, $script);
 		Yii::app()->getClientScript()->registerScript($uid, $script, $position);
 	}
+	
+	/**
+	 * Used internally, should not be called.
+	 */
+	public function init()
+	{
+		$this->registerCoreScripts();
 
+		// action initialize
+		$script = $this->map->toJS();
+
+		// add objectified actions
+		$overlays = array(
+			'routes', 'markers', 'circles', 'rectangles', 'polygons', 'polylines',
+			'styledMaps',
+		);
+		foreach ($overlays as $actions) {
+			foreach ($this->$actions as $action) {
+				$script .= ',' . $action->toJs();
+			}
+		}
+		// other actions
+		if ($this->bicyclingLayer === true) {
+			$script .= ",{action:'addBicyclingLayer'}";
+		}
+		if ($this->trafficLayer === true) {
+			$script .= ",{action:'addTrafficLayer'}";
+		}
+		if ($this->autofit === true) {
+			$script .= ",{action:'autofit'}";
+		}
+
+		$script = "jQuery('#{$this->id}').gmap3($script)";
+		if ($this->resizable === true) {
+			$script .= '.resizable()';
+		}
+		$script .= ';';
+
+//		$script="jQuery('#yw0').gmap3({
+//    'action': 'init',
+//    'options': {
+//        'center': ['41.850033', '-87.650052'],
+//        'mapTypeControlOptions': {
+//            'mapTypeIds': [google.maps.MapTypeId.ROADMAP, 'style1']
+//        },
+//        'mapTypeId': google.maps.MapTypeId.ROADMAP,
+//        'zoom': 12
+//    }
+//}, {
+//    'action': 'addStyledMap',
+//    'id': 'style1',
+//    'options': {
+//        'name': 'style 1'
+//    },
+//	'style': [{
+//	'elementType': 'geometry',
+//        'featureType': 'road.highway',
+//        'stylers': [{
+//            'hue': '#ff0022',
+//            'saturation': 60,
+//            'lightness': -20
+//        }]
+//		}]
+//});";
+		//print_r($script);die;
+
+		$this->registerScript($script);
+
+		parent::init();
+	}
+
+	/**
+	 * Used internally, should not be called.
+	 */
 	public function run()
 	{
 		echo CHtml::openTag('div', array(
@@ -342,6 +391,12 @@ class EGmap3Widget extends CWidget
 		CHtml::closeTag('div');
 	}
 
+	/**
+	 * Attach all action objects to the map, convert them to Javascript,
+	 * and render the map inside the widget.
+	 * 
+	 * MUST be last method call.
+	 */
 	public function renderMap()
 	{
 		$this->init();

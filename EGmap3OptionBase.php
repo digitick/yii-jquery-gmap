@@ -33,7 +33,9 @@ abstract class EGmap3OptionBase extends EGmap3ObjectBase
 	 */
 	public function verifyOptions()
 	{
-		foreach ($this->getOptionChecks() as $property => $allowed) {
+		$thisClass = get_class($this);
+		
+ 		foreach ($this->getOptionChecks() as $property => $allowed) {
 			$propertyValue = $this->$property;
 			if ($propertyValue === null) {
 				continue;
@@ -41,7 +43,7 @@ abstract class EGmap3OptionBase extends EGmap3ObjectBase
 			// array of allowed values
 			if (is_array($allowed)) {
 				if (!in_array($propertyValue, $allowed)) {
-					throw new CException('Invalid option given for ' . $property . ' : ' . $propertyValue);
+					throw new CException("'Invalid value given for '{$thisClass}.{$property}' : '{$propertyValue}'.");
 				}
 			}
 			// allowed class
@@ -54,25 +56,29 @@ abstract class EGmap3OptionBase extends EGmap3ObjectBase
 				else {
 					$className = 'EGmap3' . ucfirst($property);
 				}
-				$this->$property = $this->verifyClassType($property, $className, $propertyValue);
+				$this->$property = $this->verifyClassType($thisClass, $property, $className, $propertyValue);
 				$this->$property->verifyOptions();
 			}
 			/*TODO*/
 			// array of a given class
 			else if (is_string($allowed) && strpos($allowed, 'arrayOfClass:') !== false) {
+				$className = substr($allowed, 13);
 				// basic sanity check
 				if (!is_array($propertyValue)) {
-					throw new CException("The property : {$property} must be an array containg objects of class : {$className}.");
-				}
-				$className = substr($propertyValue, 12);
-				die($className);
-				
+					throw new CException("The value of '{$thisClass}.{$property}' must be an array containg objects of class : '{$className}'.");
+				}				
 				// verify each sub-object
 				foreach ($propertyValue as $prop => $val) {
-					$object = $this->verifyClassType($prop, $className, $val);
+					$object = $this->verifyClassType($thisClass, $prop, $className, $val);
 					if ($object->verifyOptions()) {
 						$propertyValue[$prop] = $object;
 					}
+				}
+			}
+			// must be an array
+			else if (is_string($allowed) && strpos($allowed, 'array') !== false) {
+				if (!is_array($propertyValue)) {
+					throw new CException("The value of '{$thisClass}.{$property}' must be an array.");
 				}
 			}
 		}
@@ -88,8 +94,8 @@ abstract class EGmap3OptionBase extends EGmap3ObjectBase
 	 * @param mixed $propertyValue Value to check
 	 * @return EGmap3OptionBase 
 	 */
-	protected function verifyClassType($property, $className, $propertyValue)
-	{
+	protected function verifyClassType($thisClass, $property, $className, $propertyValue)
+	{		
 		// array given, convert to object
 		if (is_array($propertyValue)) {
 			$object = new $className();
@@ -101,12 +107,12 @@ abstract class EGmap3OptionBase extends EGmap3ObjectBase
 		// object given, check type
 		else if (is_object($propertyValue)) {
 			if (get_class($propertyValue) !== $className) {
-				throw new CException('Invalid object type given for ' . $property . ' : ' . get_class($propertyValue));
+				throw new CException("Invalid object type given for '{$thisClass}.{$property}' : " . get_class($propertyValue));
 			}
 			return $propertyValue;
 		}
 		else {
-			throw new CException("The property : {$property} must be an object or an array.");
+			throw new CException("The value of '{$thisClass}.{$property}' must be an object or an array.");
 		}
 	}
 

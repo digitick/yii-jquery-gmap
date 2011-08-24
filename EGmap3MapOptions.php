@@ -19,129 +19,119 @@
 class EGmap3MapOptions extends EGmap3OptionBase
 {
 	/**
-	 * Color used for the background of the Map div. This color will be visible
-	 * when tiles have not yet loaded as the user pans.
-	 * @var string
+	 * @var string Color used for the background of the Map div.
+	 * 
+	 * This color will be visible when tiles have not yet loaded as the user pans.
 	 */
 	public $backgroundColor;
 	/**
-	 * The initial Map center. Required.
-	 * @var array
+	 * @var array The initial Map center. Required.
 	 */
 	public $center;
 	/**
-	 * Enables/disables all default UI. May be overridden individually.
-	 * @var boolean
+	 * @var boolean Enables/disables all default UI.
+	 * May be overridden individually.
 	 */
 	public $disableDefaultUI;
 	/**
-	 * Enables/disables zoom and center on double click. Enabled by default.
-	 * @var boolean
+	 * @var boolean Enables/disables zoom and center on double click.
+	 * Enabled by default.
 	 */
 	public $disableDoubleClickZoom;
 	/**
-	 * If false, prevents the map from being dragged. Dragging is enabled by default.
-	 * @var boolean
+	 * @var boolean If false, prevents the map from being dragged. Dragging is
+	 * enabled by default.
 	 */
 	public $draggable;
 	/**
-	 * 	The name or url of the cursor to display on a draggable object.
-	 * @var string
+	 * @var string The name or url of the cursor to display on a draggable object.
 	 */
 	public $draggableCursor;
 	/**
-	 * The name or url of the cursor to display when an object is dragging.
-	 * @var string
+	 * @var string The name or url of the cursor to display when an object is
+	 * dragging.
 	 */
 	public $draggingCursor;
 	/**
-	 * The heading for aerial imagery in degrees measured clockwise from cardinal direction North.
-	 * Headings are snapped to the nearest available angle for which imagery is available.
-	 * @var integer
+	 *  @var integer The heading for aerial imagery in degrees measured
+	 * clockwise from cardinal direction North.
+	 * 
+	 * Headings are snapped to the nearest available angle for which imagery is
+	 * available.
 	 */
 	public $heading;
 	/**
-	 * If false, prevents the map from being controlled by the keyboard.
+	 * @var boolean If false, prevents the map from being controlled by the keyboard.
 	 * Keyboard shortcuts are enabled by default.
-	 * @var boolean
 	 */
 	public $keyboardShortcuts;
 	/**
-	 * 	The initial enabled/disabled state of the Map type control.
-	 * @var boolean
+	 * @var boolean The initial enabled/disabled state of the Map type control.
 	 */
 	public $mapTypeControl;
 	/**
-	 * The initial display options for the Map type control.
-	 * @var EGmap3MapTypeControlOptions
+	 * @var EGmap3MapTypeControlOptions The initial display options for the Map
+	 * type control.
 	 */
 	public $mapTypeControlOptions;
 	/**
-	 * The initial Map mapTypeId. Required.
-	 * @var string One of 'EGmap3MApTypeId::HYBRID', 'EGmap3MApTypeId::ROADMAP',
+	 * @var string The initial Map mapTypeId. Required.
+	 * 
+	 * One of 'EGmap3MApTypeId::HYBRID', 'EGmap3MApTypeId::ROADMAP',
 	 * 'EGmap3MApTypeId::SATELLITE', 'EGmap3MApTypeId::TERRAIN'
 	 */
 	public $mapTypeId;
 	/**
-	 * The maximum zoom level which will be displayed on the map.
+	 * @var integer The maximum zoom level which will be displayed on the map.
 	 * If null, the maximum zoom from the current map type is used instead.
-	 * @var integer
 	 */
 	public $maxZoom;
 	/**
-	 * The minimum zoom level which will be displayed on the map.
+	 * @var integer The minimum zoom level which will be displayed on the map.
 	 * If null, the minimum zoom from the current map type is used instead.
-	 * @var integer
 	 */
 	public $minZoom;
 	/**
-	 * If true, do not clear the contents of the Map div.
-	 * @var boolean
+	 * @var boolean If true, do not clear the contents of the Map div.
 	 */
 	public $noClear;
 	/**
-	 * The enabled/disabled state of the Overview Map control.
-	 * @var boolean
+	 * @var boolean The enabled/disabled state of the Overview Map control.
 	 */
 	public $overviewMapControl;
 	/**
-	 * The display options for the Overview Map control.
-	 * @var EGmap3OverviewMapControlOptions
+	 * @var EGmap3OverviewMapControlOptions The display options for the
+	 * Overview Map control.
 	 */
 	public $overviewMapControlOptions;
 	/**
-	 * The enabled/disabled state of the Pan control.
-	 * @var boolean
+	 * @var boolean The enabled/disabled state of the Pan control.
 	 */
 	public $panControl;
 	/**
-	 * The display options for the Pan control.
-	 * @var EGmap3PanControlOptions
+	 * @var EGmap3PanControlOptions The display options for the Pan control.
 	 */
 	public $panControlOptions;
 	/**
-	 * The enabled/disabled state of the Rotate control.
-	 * @var boolean
+	 * @var boolean The enabled/disabled state of the Rotate control.
 	 */
 	public $rotateControl;
 	/**
-	 * The display options for the Rotate control.
-	 * @var EGmap3RotateControlOptions
+	 * @var EGmap3RotateControlOptions The display options for the Rotate
+	 * control.
 	 */
 	public $rotateControlOptions;
 	/**
-	 * The initial enabled/disabled state of the Scale control.
-	 * @var boolean
+	 * @var boolean The initial enabled/disabled state of the Scale control.
 	 */
 	public $scaleControl;
 	/**
-	 * The initial display options for the Scale control.
-	 * @var EGmap3ScaleControlOptions
+	 * @var EGmap3ScaleControlOptions The initial display options for the Scale control.
 	 */
 	public $scaleControlOptions;
 	/**
-	 * If false, disables scrollwheel zooming on the map. Enabled by default.
-	 * @var boolean
+	 * @var boolean If false, disables scrollwheel zooming on the map.
+	 * Enabled by default.
 	 */
 	public $scrollwheel;
 	/**
@@ -152,43 +142,42 @@ class EGmap3MapOptions extends EGmap3OptionBase
 	 */
 	public $streetView;
 	/**
-	 * The initial enabled/disabled state of the Street View Pegman control.
-	 * @var boolean
+	 * @var boolean The initial enabled/disabled state of the Street View
+	 * Pegman control.
 	 */
 	public $streetViewControl;
 	/**
-	 * The initial display options for the Street View Pegman control.
-	 * @var EGmap3StreetViewControlOptions
+	 * @var EGmap3StreetViewControlOptions The initial display options for the
+	 * Street View Pegman control.
 	 */
 	public $streetViewControlOptions;
 	/**
-	 * 	The angle of incidence of the map as measured in degrees from the
-	 * viewport plane to the map plane. The only currently supported values are
-	 * 0, indicating no angle of incidence (no tilt), and 45, indicating a tilt
-	 * of 45deg;. 45deg; imagery is only available for SATELLITE and HYBRID map
-	 * types, within some locations, and at some zoom levels.
-	 * @var integer
+	 *  @var integer The angle of incidence of the map as measured in degrees
+	 * from the viewport plane to the map plane.
+	 * 
+	 * The only currently supported values are 0, indicating no angle of
+	 * incidence (no tilt), and 45, indicating a tilt of 45°. 45° imagery is
+	 * only available for SATELLITE and HYBRID map types, within some
+	 * locations, and at some zoom levels.
 	 */
 	public $tilt;
 	/**
-	 * The initial Map zoom level.
-	 * @var integer
+	 * @var integer The initial Map zoom level.
 	 */
 	public $zoom;
 	/**
-	 * The enabled/disabled state of the Zoom control.
-	 * @var boolean
+	 * @var boolean The enabled/disabled state of the Zoom control.
 	 */
 	public $zoomControl;
 	/**
-	 * The display options for the Zoom control.
-	 * @var EGmap3ZoomControlOptions
+	 * @var EGmap3ZoomControlOptions The display options for the Zoom control.
 	 */
 	public $zoomControlOptions;
 
 	public function getOptionChecks()
 	{
 		return array(
+			'center' => 'array',
 			'mapTypeId' => array(
 				EGmap3MApTypeId::HYBRID,
 				EGmap3MApTypeId::ROADMAP,

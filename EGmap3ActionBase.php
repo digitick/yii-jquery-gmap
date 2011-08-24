@@ -63,7 +63,7 @@ abstract class EGmap3ActionBase extends EGmap3ObjectBase
 	 * Add a JS function to call on a specified event.
 	 *
 	 * The event will only fire once.
-	 * 
+	 *
 	 * @param string $event Event type, ex 'mouseover', 'click'.
 	 * @param string $function Javascript function to execute.
 	 */
@@ -124,6 +124,10 @@ abstract class EGmap3ActionBase extends EGmap3ObjectBase
 		return $this->callback;
 	}
 
+	/**
+	 * Get the options container for this action.
+	 * @return EGmap3OptionBase
+	 */
 	public function getOptions()
 	{
 		return $this->options;

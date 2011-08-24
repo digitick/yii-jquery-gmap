@@ -66,7 +66,8 @@ class EGmap3MapTypeControlOptions extends EGmap3MapSubOptionControl
 				EGmap3MapTypeControlStyle::DEFAULT_STYLE,
 				EGmap3MapTypeControlStyle::DROPDOWN_MENU,
 				EGmap3MapTypeControlStyle::HORIZONTAL_BAR
-			)
+			),
+			'mapTypeIds' => 'array'
 		);
 		return array_merge($array, parent::getOptionChecks());
 	}
