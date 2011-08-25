@@ -6,3 +6,13 @@ A : This extension does not access the Google Maps API directly (although it can
     There are additional functionalities, and it is easier to do certain things, for example you can place markers
     and info windows using addresses instead of figuring out the latitude/longitude. There are also some built-in
     callbacks for centering certain overlays on the map.
+
+
+Install:
+
+1. Extract the tarball.
+
+2. Place the "jquery-gmap" folder in your Yii extensions folder.
+
+3. You can copy the example view files into your application for testing.
+
