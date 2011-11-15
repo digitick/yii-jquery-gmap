@@ -209,7 +209,8 @@ class EGmap3Widget extends CWidget
 			'sensor' => 'false',
 			'language' => Yii::app()->getLanguage()
 		);
-		$apiScript = 'http://maps.google.com/maps/api/js?' . http_build_query($params);
+		$http = (Yii::app()->getRequest()->isSecureConnection)?'https':'http';
+		$apiScript = $http.'://maps.google.com/maps/api/js?' . http_build_query($params);
 
 		$assets = Yii::app()->assetManager->publish(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'assets');
 		$cs = Yii::app()->getClientScript();
