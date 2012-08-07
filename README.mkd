@@ -1,0 +1,229 @@
+Object oriented PHP interface to jquery-gmap plugin, used to access Google Maps with added functionality.
+
+**Q :** Why use this extension when there are already others ?
+
+**A :** This extension does not access the Google Maps API directly (although it can), it uses the [GMap3](http://gmap3.net "GMap3") jQuery plugin. There are additional functionalities, and it is easier to do certain things, for example you can place markers and info windows using addresses instead of figuring out the latitude/longitude. There is also some built-in callbacks for centering certain overlays on the map.
+
+This is still undergoing active development, mainly adding new features. The API should be stable.
+
+##Requirements
+
+Tested on Yii 1.1.6-7, should work on all 1.1.x versions.
+
+##Install
+1. Extract the tarball.
+
+2. Place the "jquery-gmap" folder in your Yii extensions folder.
+
+3. You can copy the example view files into your application for testing.
+
+##Usage
+
+Gmap3 has two modes of constructing the map : pure object oriented and object with arrays based. Internally, the extension converts any arrays to objects of the correct type.
+
+###Pure Object Oriented
+The pure OO way is useful for those that are using an IDE such as Netbeans or Eclipse, as all the options and properties are well documented in the code using Google's API documentation as a base.
+
+This means you don't need to look up the API website to see which parameters are available for a particular object, and what type of value is needed.
+
+It may also be easier to work with the map programmatically using this approach (i.e. setting options & parameters based on database values, etc ...).
+
+~~~
+[php]
+$gmap = new EGmap3Widget();
+
+$options = new EGmap3MapOptions();
+$options->scaleControl = true;
+$options->streetViewControl = false;
+$options->zoom = 1;
+$options->center = array(0,0);
+$options->mapTypeId = EGmap3MapTypeId::HYBRID;
+
+$typeOptions = new EGmap3MapTypeControlOptions();
+$typeOptions->style = EGmap3MapTypeControlStyle::DROPDOWN_MENU;
+$typeOptions->position = EGmap3ControlPosition::TOP_CENTER;
+$options->mapTypeControlOptions = $typeOptions;
+
+$zoomOptions = new EGmap3ZoomControlOptions();
+$zoomOptions->style = EGmap3ZoomControlStyle::SMALL;
+$zoomOptions->position = EGmap3ControlPosition::BOTTOM_CENTER;
+$options->zoomControlOptions = $zoomOptions;
+
+$gmap->setOptions($options);
+~~~
+
+###Object With Array
+The object with array approach is maybe a little simpler to use, but you will need to know the exact names and types of the parameters you set. Note that to add overlays to the map such as markers, info windows, shapes, etc you will still need to pass objects. The arrays are only for object _options_.
+
+~~~
+[php]
+$gmap = new EGmap3Widget();
+$options = array(
+	'scaleControl' => true,
+	'streetViewControl' => false,
+	'zoom' => 1,
+	'center' => array(0,0),
+	'mapTypeId' => EGmap3MapTypeId::HYBRID,
+	'mapTypeControlOptions' => array(
+		'style' => EGmap3MapTypeControlStyle::DROPDOWN_MENU,
+		'position' => EGmap3ControlPosition::TOP_CENTER,
+	),
+	'zoomControlOptions' => array(
+		'style' => EGmap3ZoomControlStyle::SMALL,
+		'position' => EGmap3ControlPosition::BOTTOM_CENTER
+	),
+);
+$gmap->setOptions($options);
+~~~
+
+###Combining
+Now of course, this isn't an all or nothing proposition, you can very well combine the two approaches :
+~~~
+[php]
+$options = new EGmap3MapOptions();
+$options->scaleControl = true;
+$options->streetViewControl = false;
+$options->zoom = 1;
+$options->center = array(0,0);
+$options->mapTypeId = EGmap3MapTypeId::HYBRID;
+$options->mapTypeControlOptions = array(
+	'style' => EGmap3MapTypeControlStyle::DROPDOWN_MENU,
+	'position' => EGmap3ControlPosition::TOP_CENTER
+);
+$options->zoomControlOptions = array(
+	'style' => EGmap3ZoomControlStyle::SMALL,
+	'position' => EGmap3ControlPosition::BOTTOM_CENTER
+);
+$gmap->setOptions($options);
+~~~
+
+##Extra Functions
+This extension comes with some built in enhancements to the Google Maps interface. 
+
+###Save Marker Position and Map Zoom to Yii Model
+Allows capturing the latitude and longitude from a map marker, and the map's zoom level, to a Yii model object. This is useful if you want to save additional information related to an address in your database.
+
+Address model example :
+~~~
+[php]
+class Address extends CActiveRecord
+{
+	public $latitude;
+	public $longitude;
+        public $mapZoomLevel;
+
+	public function rules()
+	{
+            return array(
+                array('latitude,longitude', 'numerical'),
+                array('mapZoomLevel', 'numerical', 'integerOnly'=>true),
+            );
+	}
+}
+~~~
+
+In your view file :
+~~~
+[php]
+// init the model (usually passed to view)
+$address = new Address();
+
+// init the map
+$gmap = new EGmap3Widget();
+$gmap->setOptions(array('zoom' => 14));
+
+// create the marker
+$marker = new EGmap3Marker(array(
+	'title' => 'Draggable address marker',
+	'draggable' => true,
+));
+$marker->address = '10 Downing St, Westminster, London SW1A 2, UK';
+$marker->centerOnMap();
+
+// set the marker to relay its position information a model
+$marker->capturePosition(
+     // the model object
+     $address,
+     // model's latitude property name
+     'latitude',
+     // model's longitude property name
+     'longitude',
+     // Options set :
+     //   show the fields, defaults to hidden fields
+     //   update the fields during the marker drag event
+     array('visible','drag')
+);
+$gmap->add($marker);
+
+// Capture the map's zoom level, by default generates a hidden field
+// for passing the value through POST
+$gmap->map->captureZoom(
+    // model object
+    $address,
+    // model attribute
+   'mapZoomLevel',
+   // whether to auto generate the field
+   true,
+   // HTML options to pass to the field
+   array('class' => 'myCustomClass'),
+);
+
+$gmap->renderMap();
+~~~
+
+###Update Marker Position from Yii Model
+Allow updating a marker based on a Yii model, this is done interactively as a user completes or modifies a form (onchange).
+
+Assuming the model «Address» as described above but also having the typical address parameters (lines, city, zip, etc).
+
+In your view file :
+~~~
+[php]
+// build a normal Yii form
+$form = $this->beginWidget('CActiveForm', array(
+	'id'=>'address-form',
+));
+echo $form->textField($address, 'address1');
+echo $form->textField($address, 'address2');
+echo $form->textField($address, 'city');
+
+// [etc ... etc ...]
+
+// create a map centered in the middle of the world ...
+$gmap = new EGmap3Widget();
+$gmap->setOptions(array(
+        'zoom' => 2,
+        'center' => array(0,0),
+));
+// add a marker
+$marker = new EGmap3Marker(array(
+	'title' => 'Updateable marker',
+));
+$marker->latLng = array(0,0);
+$gmap->add($marker);
+
+// tell the gmap to update the marker from the Address model fields.
+$gmap->updateMarkerAddressFromModel(
+     // the model object
+     $address,
+     // the model attributes to capture, these MUST be present in the form
+     // constructed above. Attributes must also be given in the correct
+     // order for assembling the address string.
+     array('address1','address2','city','postalCode','region','country'),
+     // you may pass these options :
+     // 'first' - set to first marker added to map, default is last
+     // 'nopan' - do not pan the map on marker update.
+     array()
+);
+$gmap->renderMap();
+~~~
+
+##Demo
+Take a look at the examples folder in the download for demos and examples. These are Yii view files you can copy into your application.
+
+
+##Resources
+
+ * [GMap3 plugin](http://gmap3.net/api.html "") API & demos
+ * [Forum topic](http://www.yiiframework.com/forum/index.php?/topic/18381-extension-jquery-gmap/ "Forum topic"), please use this to discuss all aspects of this extension.
+ * [Github](https://github.com/digitick/yii-jquery-gmap) Fork it !
