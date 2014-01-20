@@ -1083,7 +1083,7 @@
       } else if (typeof(todo.callback) === 'object') {
         for(var i=0; i<todo.callback.length; i++){
           if (typeof(todo.callback[i]) === 'function') {
-            todo.callback[k].apply($this, [result]);
+            todo.callback[i].apply($this, [result]);
           }
         }
       }
